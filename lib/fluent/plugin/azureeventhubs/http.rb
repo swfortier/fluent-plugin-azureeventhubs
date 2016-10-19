@@ -7,6 +7,7 @@ class AzureEventHubsHttpSender
     require 'json'
     require 'cgi'
     require 'time'
+    require 'logger'
     @connection_string = connection_string
     @hub_name = hub_name
     @expiry_interval = expiry
@@ -42,6 +43,8 @@ class AzureEventHubsHttpSender
   end
 
   private :generate_sas_token
+  
+  logger = Logger.new('/var/log/td-agent/fluent-azure-http.log', 10, 1024000)
 
   def send(payload)
     token = generate_sas_token(@uri.to_s)
@@ -62,6 +65,15 @@ class AzureEventHubsHttpSender
     req = Net::HTTP::Post.new(@uri.request_uri, headers)
     req.body = payload.to_json
     res = https.request(req)
+    
+    if (res.code < 400)
+        logger.info "HTTP #{res.code} : #{req.body}"
+    elsif (res.code >= 400)
+	logger.error "HTTP #{res.code} : #{req.body}"
+    end
+    
     rescue Timeout::Error, Errno::EINVAL, Errno::ECONNRESET, EOFError, Errno::ETIMEDOUT, Net::HTTPBadResponse, Net::HTTPHeaderSyntaxError, Net::ProtocolError => e
   end
+  
+  logger.close
 end
