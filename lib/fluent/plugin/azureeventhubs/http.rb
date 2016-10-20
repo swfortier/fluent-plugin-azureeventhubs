@@ -65,13 +65,23 @@ class AzureEventHubsHttpSender
         https.read_timeout = @read_timeout
     end
     https.use_ssl = true
+    
     req = Net::HTTP::Post.new(@uri.request_uri, headers)
     req.body = payload.to_json
-    res = https.request(req)
     
-    @log.info("HTTP #{res.code} : #{@uri.host} : #{@uri.port} : #{req.body}")
+    start_time = Time.now.getutc
+    res = https.request(req)
+    end_time = Time.now.getutc
+    
+    msecs = time_diff_milli start_time, end_time
+    
+    @log.info("HTTP #{res.code} : #{msecs} ms : #{@uri.host} : #{@uri.port} : #{req.body}")
     
     rescue Timeout::Error, Errno::EINVAL, Errno::ECONNRESET, EOFError, Errno::ETIMEDOUT, Net::HTTPBadResponse, Net::HTTPHeaderSyntaxError, Net::ProtocolError => e
+  end
+  
+  def time_diff_milli(start, finish)
+    (finish - start) * 1000.0
   end
   
   #logger.close
