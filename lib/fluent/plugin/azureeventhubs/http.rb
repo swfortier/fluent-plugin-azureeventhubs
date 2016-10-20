@@ -68,7 +68,7 @@ class AzureEventHubsHttpSender
     req.body = payload.to_json
     res = https.request(req)
     
-    @log.info res.code
+    @log.info "HTTP #{res.code} : #{uri.host} : #{@uri.port} : #{req.body}"
     
     if (res.code < 400)
         @log.info "HTTP #{res.code} : #{req.body}"
