@@ -10,7 +10,7 @@ class AzureEventHubsHttpSender
     require 'logger'
     
     @log = Logger.new('/var/log/td-agent/fluent-azure-http.log')
-    @log.debug "FluentD Azure EventHubs Plugin Started"
+    @log.debug("FluentD Azure EventHubs Plugin Started")
     
     @connection_string = connection_string
     @hub_name = hub_name
@@ -68,12 +68,12 @@ class AzureEventHubsHttpSender
     req.body = payload.to_json
     res = https.request(req)
     
-    @log.info "HTTP #{res.code} : #{uri.host} : #{@uri.port} : #{req.body}"
+    @log.info("HTTP #{res.code} : #{uri.host} : #{@uri.port} : #{req.body}")
     
     if (res.code < 400)
-        @log.info "HTTP #{res.code} : #{req.body}"
+        @log.info("HTTP #{res.code} : #{req.body}")
     elsif (res.code >= 400)
-	@log.error "HTTP #{res.code} : #{req.body}"
+	@log.error("HTTP #{res.code} : #{req.body}")
     end
     
     rescue Timeout::Error, Errno::EINVAL, Errno::ECONNRESET, EOFError, Errno::ETIMEDOUT, Net::HTTPBadResponse, Net::HTTPHeaderSyntaxError, Net::ProtocolError => e
