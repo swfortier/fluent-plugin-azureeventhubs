@@ -10,7 +10,7 @@ class AzureEventHubsHttpSender
     require 'logger'
     
     @log = Logger.new('/var/log/td-agent/fluent-azure-http.log', 10, 1024000)
-    @log.info("FluentD Azure EventHubs Plugin Started")
+    @log.info("Fluentd Azure EventHubs Plugin Started...")
     
     @connection_string = connection_string
     @hub_name = hub_name
