@@ -9,7 +9,7 @@ class AzureEventHubsHttpSender
     require 'time'
     require 'logger'
     
-    @log = Logger.new('/var/log/td-agent/fluent-azure-http.log')
+    @log = Logger.new('/var/log/td-agent/fluent-azure-http.log', 10, 1024000)
     @log.debug("FluentD Azure EventHubs Plugin Started")
     
     @connection_string = connection_string
@@ -49,7 +49,6 @@ class AzureEventHubsHttpSender
   private :generate_sas_token
 
   def send(payload)
-    @log.info("Payload Called...")
     token = generate_sas_token(@uri.to_s)
     headers = {
       'Content-Type' => 'application/atom+xml;type=entry;charset=utf-8',
