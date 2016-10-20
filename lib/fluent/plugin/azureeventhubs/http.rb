@@ -77,7 +77,7 @@ class AzureEventHubsHttpSender
     @log.info("HTTP #{res.code} :: #{msecs} ms :: #{@uri.host}:#{@uri.port} :: #{req.body}")
     
     rescue Timeout::Error, Errno::EINVAL, Errno::ECONNRESET, EOFError, Errno::ETIMEDOUT, Net::HTTPBadResponse, Net::HTTPHeaderSyntaxError, Net::ProtocolError => e
-      @log.error("Error Posting to Azure: #{e}")
+      @log.error("Error Posting to #{@uri.host}:#{@uri.port}: #{e} : Payload #{req.body}")
   end
   
   def time_diff_milli(start, finish)
