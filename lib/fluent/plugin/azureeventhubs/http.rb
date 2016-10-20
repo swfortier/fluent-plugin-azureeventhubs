@@ -10,7 +10,7 @@ class AzureEventHubsHttpSender
     require 'logger'
     
     @log = Logger.new('/var/log/td-agent/fluent-azure-http.log', 10, 1024000)
-    @log.debug("FluentD Azure EventHubs Plugin Started")
+    @log.info("FluentD Azure EventHubs Plugin Started")
     
     @connection_string = connection_string
     @hub_name = hub_name
@@ -77,6 +77,7 @@ class AzureEventHubsHttpSender
     @log.info("HTTP #{res.code} :: #{msecs} ms :: #{@uri.host}:#{@uri.port} :: #{req.body}")
     
     rescue Timeout::Error, Errno::EINVAL, Errno::ECONNRESET, EOFError, Errno::ETIMEDOUT, Net::HTTPBadResponse, Net::HTTPHeaderSyntaxError, Net::ProtocolError => e
+      @log.error("Error Posting to Azure: #{e}")
   end
   
   def time_diff_milli(start, finish)
