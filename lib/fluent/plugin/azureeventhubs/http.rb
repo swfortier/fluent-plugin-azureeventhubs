@@ -10,7 +10,6 @@ class AzureEventHubsHttpSender
     require 'logger'
     
     @log = Logger.new('/var/log/td-agent/fluent-azure-http.log', 10, 1024000)
-    @log.info("Fluentd Azure EventHubs Plugin Started...")
     
     @connection_string = connection_string
     @hub_name = hub_name
@@ -23,6 +22,8 @@ class AzureEventHubsHttpSender
     if @connection_string.count(';') != 2
       raise "Connection String format is not correct"
     end
+    
+    @log.info("Fluentd Initialized for hub: #{@hub_name}")
 
     @connection_string.split(';').each do |part|
       if ( part.index('Endpoint') == 0 )
