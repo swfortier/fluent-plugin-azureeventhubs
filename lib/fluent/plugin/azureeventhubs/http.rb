@@ -8,6 +8,10 @@ class AzureEventHubsHttpSender
     require 'cgi'
     require 'time'
     require 'logger'
+    
+    @log = Logger.new('/var/log/td-agent/fluent-azure-http.log')
+    @log.debug "FluentD Azure EventHubs Plugin Started"
+    
     @connection_string = connection_string
     @hub_name = hub_name
     @expiry_interval = expiry
@@ -16,9 +20,6 @@ class AzureEventHubsHttpSender
     @open_timeout = open_timeout
     @read_timeout = read_timeout
     
-    log = Logger.new('/var/log/td-agent/fluent-azure-http.log', 10, 1024000)
-    log.debug "Log file created"
-
     if @connection_string.count(';') != 2
       raise "Connection String format is not correct"
     end
@@ -66,6 +67,8 @@ class AzureEventHubsHttpSender
     req = Net::HTTP::Post.new(@uri.request_uri, headers)
     req.body = payload.to_json
     res = https.request(req)
+    
+    log.info res.code
     
     if (res.code < 400)
         log.info "HTTP #{res.code} : #{req.body}"
