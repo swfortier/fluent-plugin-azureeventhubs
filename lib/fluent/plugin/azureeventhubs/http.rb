@@ -49,6 +49,7 @@ class AzureEventHubsHttpSender
   private :generate_sas_token
 
   def send(payload)
+    @log.info("Payload Called...")
     token = generate_sas_token(@uri.to_s)
     headers = {
       'Content-Type' => 'application/atom+xml;type=entry;charset=utf-8',
