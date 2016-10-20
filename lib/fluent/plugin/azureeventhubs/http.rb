@@ -15,6 +15,9 @@ class AzureEventHubsHttpSender
     @proxy_port = proxy_port
     @open_timeout = open_timeout
     @read_timeout = read_timeout
+    
+    log = Logger.new('/var/log/td-agent/fluent-azure-http.log', 10, 1024000)
+    log.debug "Log file created"
 
     if @connection_string.count(';') != 2
       raise "Connection String format is not correct"
@@ -43,8 +46,6 @@ class AzureEventHubsHttpSender
   end
 
   private :generate_sas_token
-  
-  logger = Logger.new('/var/log/td-agent/fluent-azure-http.log', 10, 1024000)
 
   def send(payload)
     token = generate_sas_token(@uri.to_s)
@@ -67,13 +68,13 @@ class AzureEventHubsHttpSender
     res = https.request(req)
     
     if (res.code < 400)
-        logger.info "HTTP #{res.code} : #{req.body}"
+        log.info "HTTP #{res.code} : #{req.body}"
     elsif (res.code >= 400)
-	logger.error "HTTP #{res.code} : #{req.body}"
+	log.error "HTTP #{res.code} : #{req.body}"
     end
     
     rescue Timeout::Error, Errno::EINVAL, Errno::ECONNRESET, EOFError, Errno::ETIMEDOUT, Net::HTTPBadResponse, Net::HTTPHeaderSyntaxError, Net::ProtocolError => e
   end
   
-  logger.close
+  #logger.close
 end
