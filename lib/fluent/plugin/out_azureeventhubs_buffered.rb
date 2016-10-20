@@ -14,6 +14,7 @@
     config_param :proxy_port, :integer,:default => 3128
     config_param :open_timeout, :integer,:default => 60
     config_param :read_timeout, :integer,:default => 60
+    config_param :retries, :integer,:default => 3
 
     def configure(conf)
       super

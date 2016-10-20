@@ -1,6 +1,6 @@
 
 class AzureEventHubsHttpSender
-  def initialize(connection_string, hub_name, expiry=3600,proxy_addr='',proxy_port=3128,open_timeout=60,read_timeout=60)
+  def initialize(connection_string, hub_name, expiry=3600,proxy_addr='',proxy_port=3128,open_timeout=60,read_timeout=60,retries=3)
     require 'openssl'
     require 'base64'
     require 'net/http'
@@ -18,6 +18,7 @@ class AzureEventHubsHttpSender
     @proxy_port = proxy_port
     @open_timeout = open_timeout
     @read_timeout = read_timeout
+    @retries = retries
     
     if @connection_string.count(';') != 2
       raise "Connection String format is not correct"
@@ -50,7 +51,7 @@ class AzureEventHubsHttpSender
   private :generate_sas_token
 
   def send(payload)
-    tries ||= 3
+
     token = generate_sas_token(@uri.to_s)
     headers = {
       'Content-Type' => 'application/atom+xml;type=entry;charset=utf-8',
@@ -77,7 +78,7 @@ class AzureEventHubsHttpSender
     msecs = time_diff_milli start_time, end_time
     
     rescue Timeout::Error, Errno::EINVAL, Errno::ECONNRESET, EOFError, Errno::ETIMEDOUT, Net::HTTPBadResponse, Net::HTTPHeaderSyntaxError, Net::ProtocolError => e
-      if (tries -= 1) > 0
+      if (@retries -= 1) > 0
 	@log.debug("Retrying Post to #{@uri.host}:#{@uri.port}/#{@hub_name}: #{e}")
 	retry
       else
