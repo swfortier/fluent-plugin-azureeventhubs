@@ -75,13 +75,13 @@ class AzureEventHubsHttpSender
     
     msecs = time_diff_milli start_time, end_time
     
-    @log.info("HTTP #{res.code} -- #{msecs} ms -- #{@uri.host}:#{@uri.port} -- #{req.body}")
+    @log.info("HTTP #{res.code} :: #{msecs} ms :: #{@uri.host}:#{@uri.port} :: #{req.body}")
     
     rescue Timeout::Error, Errno::EINVAL, Errno::ECONNRESET, EOFError, Errno::ETIMEDOUT, Net::HTTPBadResponse, Net::HTTPHeaderSyntaxError, Net::ProtocolError => e
   end
   
   def time_diff_milli(start, finish)
-    (finish - start) * 1000
+    ((finish - start) * 1000).to_i 
   end
   
   #logger.close
