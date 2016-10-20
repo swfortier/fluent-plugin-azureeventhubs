@@ -51,7 +51,7 @@ class AzureEventHubsHttpSender
   private :generate_sas_token
 
   def send(payload)
-
+    tries ||= @retries
     token = generate_sas_token(@uri.to_s)
     headers = {
       'Content-Type' => 'application/atom+xml;type=entry;charset=utf-8',
@@ -78,7 +78,7 @@ class AzureEventHubsHttpSender
     msecs = time_diff_milli start_time, end_time
     
     rescue Timeout::Error, Errno::EINVAL, Errno::ECONNRESET, EOFError, Errno::ETIMEDOUT, Net::HTTPBadResponse, Net::HTTPHeaderSyntaxError, Net::ProtocolError => e
-      if (@retries -= 1) > 0
+      if (tries -= 1) > 0
 	@log.debug("Retrying Post to #{@uri.host}:#{@uri.port}/#{@hub_name}: #{e}")
 	retry
       else
