@@ -68,12 +68,12 @@ class AzureEventHubsHttpSender
     req.body = payload.to_json
     res = https.request(req)
     
-    log.info res.code
+    @log.info res.code
     
     if (res.code < 400)
-        log.info "HTTP #{res.code} : #{req.body}"
+        @log.info "HTTP #{res.code} : #{req.body}"
     elsif (res.code >= 400)
-	log.error "HTTP #{res.code} : #{req.body}"
+	@log.error "HTTP #{res.code} : #{req.body}"
     end
     
     rescue Timeout::Error, Errno::EINVAL, Errno::ECONNRESET, EOFError, Errno::ETIMEDOUT, Net::HTTPBadResponse, Net::HTTPHeaderSyntaxError, Net::ProtocolError => e
