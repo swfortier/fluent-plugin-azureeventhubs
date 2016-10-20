@@ -49,6 +49,7 @@ class AzureEventHubsHttpSender
   private :generate_sas_token
 
   def send(payload)
+    tries ||= 3
     token = generate_sas_token(@uri.to_s)
     headers = {
       'Content-Type' => 'application/atom+xml;type=entry;charset=utf-8',
@@ -74,10 +75,15 @@ class AzureEventHubsHttpSender
     
     msecs = time_diff_milli start_time, end_time
     
-    @log.info("HTTP #{res.code} :: #{msecs} ms :: #{@uri.host}:#{@uri.port} :: #{req.body}")
-    
     rescue Timeout::Error, Errno::EINVAL, Errno::ECONNRESET, EOFError, Errno::ETIMEDOUT, Net::HTTPBadResponse, Net::HTTPHeaderSyntaxError, Net::ProtocolError => e
-      @log.error("Error Posting to #{@uri.host}:#{@uri.port}: #{e} : Payload #{req.body}")
+      if (tries -= 1) > 0
+	retry
+      else
+	@log.info("Error Posting to #{@uri.host}:#{@uri.port}: #{e} : Payload #{req.body}")
+      end
+    else
+      @log.info("HTTP #{res.code} :: #{msecs} ms :: #{@uri.host}:#{@uri.port} :: #{req.body}")
+      
   end
   
   def time_diff_milli(start, finish)
