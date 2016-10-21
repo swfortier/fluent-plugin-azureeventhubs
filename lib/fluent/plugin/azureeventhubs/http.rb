@@ -79,10 +79,10 @@ class AzureEventHubsHttpSender
     
     rescue Timeout::Error, Errno::EINVAL, Errno::ECONNRESET, EOFError, Errno::ETIMEDOUT, Net::HTTPBadResponse, Net::HTTPHeaderSyntaxError, Net::ProtocolError => e
       if (tries -= 1) > 0
-	@log.debug("Retrying Post to #{@uri.host}:#{@uri.port}/#{@hub_name}: #{e}")
+	@log.warn("Retrying Post to #{@uri.host}:#{@uri.port}/#{@hub_name}: #{e}")
 	retry
       else
-	@log.info("Error Posting to #{@uri.host}:#{@uri.port}/#{@hub_name}: #{e} : Payload #{req.body}")
+	@log.error("Error Posting to #{@uri.host}:#{@uri.port}/#{@hub_name}: #{e} : Payload #{req.body}")
       end
     else
       @log.info("HTTP #{res.code} :: #{msecs} ms :: #{@uri.host}:#{@uri.port}/#{@hub_name} :: #{req.body}")
