@@ -24,7 +24,7 @@ class AzureEventHubsHttpSender
       raise "Connection String format is not correct"
     end
     
-    @log.info("Fluentd Initialized for hub: #{@hub_name}")
+    @log.info("Fluentd Initialized for hub: #{@hub_name} -- open_timeout: #{@open_timeout}, read_timeout: #{@read_timeout}, retries: #{@retries}")
 
     @connection_string.split(';').each do |part|
       if ( part.index('Endpoint') == 0 )
