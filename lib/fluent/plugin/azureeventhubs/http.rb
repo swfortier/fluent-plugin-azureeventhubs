@@ -8,8 +8,8 @@ class AzureEventHubsHttpSender
     require 'cgi'
     require 'time'
     require 'logger'
-    
-    @log = Logger.new('/var/log/td-agent/fluent-azure-http.log', 10, 1024000)
+
+    @log = Logger.new('/var/log/td-agent/fluent-azure-http.log', 10, 10240000)
     
     @connection_string = connection_string
     @hub_name = hub_name
@@ -24,7 +24,7 @@ class AzureEventHubsHttpSender
       raise "Connection String format is not correct"
     end
     
-    @log.info("Fluentd Initialized for hub: #{@hub_name} -- open_timeout: #{@open_timeout}, read_timeout: #{@read_timeout}, retries: #{@retries}")
+    @log.info("Fluentd Initialized for eventhub: #{@hub_name} -- open_timeout: #{@open_timeout}, read_timeout: #{@read_timeout}, retries: #{@retries}")
 
     @connection_string.split(';').each do |part|
       if ( part.index('Endpoint') == 0 )
@@ -78,7 +78,7 @@ class AzureEventHubsHttpSender
     msecs = time_diff_milli start_time, end_time
     
     rescue Timeout::Error, Errno::EINVAL, Errno::ECONNRESET, EOFError, Errno::ETIMEDOUT, Net::HTTPBadResponse, Net::HTTPHeaderSyntaxError, Net::ProtocolError => e
-      if (tries -= 1) > 0
+      if (tries -= 1) >= 0
 	@log.warn("Retrying Post to #{@uri.host}:#{@uri.port}/#{@hub_name}: #{e} : Retries Left #{tries} : Payload #{req.body}")
 	retry
       else
