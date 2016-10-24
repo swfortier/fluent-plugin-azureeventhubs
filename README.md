@@ -33,8 +33,9 @@ Or install it yourself as:
   expiry_interval   <Integer number> # Signature expiration time interval in seconds. [Optional: default => 3600 (60min)]
   proxy_addr       <Host or IP> # Address of the proxy [Optional]
   proxy_port	   <Integer>   # Proxy port. [Optional: default => 3128]
-  read_timeout     <Integer>   # HTTP Read timeout in seconds[Optional: default => 60]
-  open_timeout     <Integer>   # HTTP Open timeout in seconds[Optional: default => 60]
+  read_timeout     <Integer>   # HTTP Read timeout in seconds [Optional: default => 60]
+  open_timeout     <Integer>   # HTTP Open timeout in seconds [Optional: default => 60]
+  retries          <Integer>   # Number of times the connection is retried on exception [Optional: default => 3]
 </match>
 ```
 
